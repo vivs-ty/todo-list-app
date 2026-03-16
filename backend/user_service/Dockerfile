@@ -2,11 +2,12 @@ FROM python:3.10
 
 WORKDIR /app
 
-COPY . /app
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt
+COPY user_service /app/user_service
 
 EXPOSE 8003
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8003"]
+CMD ["uvicorn", "user_service.main:app", "--host", "0.0.0.0", "--port", "8003"]
 

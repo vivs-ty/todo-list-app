@@ -1,32 +1,30 @@
-version: '3.8'
-
 services:
   auth_service:
-    build: ./auth_service
+    build:
+      context: .
+      dockerfile: auth_service/Dockerfile
     ports:
       - "8001:8001"
-    depends_on:
-      - db
     environment:
-      DATABASE_URL: postgresql://user:password@db/auth_db
+      SECRET_KEY: todo-list-dev-secret
 
   task_service:
-    build: ./task_service
+    build:
+      context: .
+      dockerfile: task_service/Dockerfile
     ports:
       - "8002:8002"
-    depends_on:
-      - db
     environment:
-      DATABASE_URL: postgresql://user:password@db/task_db
+      SECRET_KEY: todo-list-dev-secret
 
   user_service:
-    build: ./user_service
+    build:
+      context: .
+      dockerfile: user_service/Dockerfile
     ports:
       - "8003:8003"
-    depends_on:
-      - db
     environment:
-      DATABASE_URL: postgresql://user:password@db/user_db
+      SECRET_KEY: todo-list-dev-secret
 
   db:
     image: postgres:15
@@ -39,15 +37,18 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-volumes:
-  postgres_data:
-
-    frontend:
+  frontend:
     build: ../frontend
     ports:
       - "80:80"
+    environment:
+      REACT_APP_AUTH_API_URL: http://localhost:8001
+      REACT_APP_TASK_API_URL: http://localhost:8002
     depends_on:
       - auth_service
       - task_service
       - user_service
+
+volumes:
+  postgres_data:
 

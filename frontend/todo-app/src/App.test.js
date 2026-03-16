@@ -1,8 +1,24 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+jest.mock('./components/Auth', () => function AuthMock() {
+  return <button type="button">Login</button>;
+});
+
+jest.mock('./components/Tasks', () => function TasksMock() {
+  return <div>Tasks Area</div>;
+});
+
+beforeEach(() => {
+  localStorage.clear();
+});
+
+test('renders the new app title', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  expect(screen.getByText(/task atlas/i)).toBeInTheDocument();
+});
+
+test('shows login action when user is logged out', () => {
+  render(<App />);
+  expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
 });
